@@ -58,27 +58,31 @@ int main()
 
     // Image
     const auto aspect_ratio = 16.0 / 9.0;
-    const int image_width = 400;
+    const int image_width = 800;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
-    const int samples_per_pixel = 100;
+    const int samples_per_pixel = 250;
     const int max_depth = 10;
 
 
     // World
     hittable_list world;
 
-    //world.add(make_shared<sphere>(point3(0, 0, -1), 0.5));
-    //world.add(make_shared<sphere>(point3(0, -100.5, -1), 100));
+    // Materials
+    auto material_ground        = make_shared<lambertian>   (color(0.3, 0.0, 0.4));
+    auto material_lambertian    = make_shared<lambertian>   (color(0.9, 0.1, 0.6));
+    auto material_dialectric    = make_shared<dielectric>   (1.7);
+    auto material_metal         = make_shared<metal>        (color(0.2, 0.2, 0.2), 0.1);
 
-    auto material_ground = make_shared<lambertian>(color(0.8, 0.8, 0.0));
-    auto material_center = make_shared<lambertian>(color(0.7, 0.3, 0.3));
-    auto material_left = make_shared<metal>(color(0.8, 0.8, 0.8), 0.0);
-    auto material_right = make_shared<metal>(color(0.8, 0.6, 0.2), 1.0);
-
+    // Sphere objects
+    // Ground sphere
     world.add(make_shared<sphere>(point3(0.0, -100.5, -1.0), 100.0, material_ground));
-    world.add(make_shared<sphere>(point3(0.0, 0.0, -1.0), 0.5, material_center));
-    world.add(make_shared<sphere>(point3(-1.0, 0.0, -1.0), 0.5, material_left));
-    world.add(make_shared<sphere>(point3(1.0, 0.0, -1.0), 0.5, material_right));
+    // Middle sphere
+    world.add(make_shared<sphere>(point3(0.0, 0.0, -1.0), 0.5, material_lambertian));
+    // Left sphere (2 objects: hollow doublesided sphere)
+    world.add(make_shared<sphere>(point3(-1.0, 0.0, -1.0), 0.5, material_dialectric));
+    world.add(make_shared<sphere>(point3(-1.0, 0.0, -1.0), -0.4, material_dialectric));
+    // Right sphere
+    world.add(make_shared<sphere>(point3(1.0, 0.0, -1.0), 0.5, material_metal));
 
 
     // Camera
