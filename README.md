@@ -4,4 +4,4 @@
 
 End Result:
 
-![result_16-9-2022](https://user-images.githubusercontent.com/89635193/190582149-ec717813-5134-4797-b11a-2cb550421f98.png)
+![result_16-9-2022](https://github.com/MaxineCodes/SimpleRaytracing/blob/main/result_27-9-2022.png)
