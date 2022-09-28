@@ -65,28 +65,52 @@ int main()
 
 
     // World
+    auto R = cos(pi / 4);
     hittable_list world;
 
     // Materials
     auto material_ground        = make_shared<lambertian>   (color(0.3, 0.0, 0.4));
     auto material_lambertian    = make_shared<lambertian>   (color(0.9, 0.1, 0.6));
-    auto material_dialectric    = make_shared<dielectric>   (1.7);
-    auto material_metal         = make_shared<metal>        (color(0.2, 0.2, 0.2), 0.1);
+    auto material_dialectric    = make_shared<dielectric>   (1.5);
+    auto material_metal         = make_shared<metal>        (color(0.7, 0.7, 0.7), 0.2);
+    auto material_fuzzyMetal    = make_shared<metal>        (color(0.7, 0.7, 0.7), 0.9);
+    auto material_bronze        = make_shared<metal>        (color(0.8, 0.45, 0.3), 0.6);
+    auto material_redMetal      = make_shared<metal>        (color(1.0, 0.0, 0.0), 0.1);
 
     // Sphere objects
     // Ground sphere
-    world.add(make_shared<sphere>(point3(0.0, -100.5, -1.0), 100.0, material_ground));
-    // Middle sphere
+    world.add(make_shared<sphere>(point3(0.0, -1000.5, -1.0), 1000.0, material_ground));
+    // Middle sphere, lambert
     world.add(make_shared<sphere>(point3(0.0, 0.0, -1.0), 0.5, material_lambertian));
-    // Left sphere (2 objects: hollow doublesided sphere)
+    // Left sphere, dialectric (2 objects: hollow doublesided sphere)
     world.add(make_shared<sphere>(point3(-1.0, 0.0, -1.0), 0.5, material_dialectric));
-    world.add(make_shared<sphere>(point3(-1.0, 0.0, -1.0), -0.4, material_dialectric));
-    // Right sphere
+    world.add(make_shared<sphere>(point3(-1.0, 0.0, -1.0), -0.49, material_dialectric));
+    // Sphere inside left sphere, metal
+    world.add(make_shared<sphere>(point3(-1.0, 0.0, -1.0), 0.2, material_bronze));
+    // Right sphere, metal
     world.add(make_shared<sphere>(point3(1.0, 0.0, -1.0), 0.5, material_metal));
+    // Small left sphere, full dialectric
+    world.add(make_shared<sphere>(point3(-1.2, -0.3, -0.3), 0.2, material_dialectric));
+    // Small left sphere, hollow dialectric
+    world.add(make_shared<sphere>(point3(-0.6, -0.3, -0.3), 0.2, material_dialectric));
+    world.add(make_shared<sphere>(point3(-0.6, -0.3, -0.3), -0.19, material_dialectric));
+    // Small middle sphere, metal
+    world.add(make_shared<sphere>(point3(0.0, -0.3, -0.3), 0.2, material_fuzzyMetal));
+    // Small right sphere, metal
+    world.add(make_shared<sphere>(point3(0.6, -0.3, -0.3), 0.2, material_redMetal));
+    // Small right sphere, metal
+    world.add(make_shared<sphere>(point3(1.2, -0.3, -0.3), 0.2, material_bronze));
 
 
     // Camera
-    camera cam;
+    point3 lookfrom(0.35, 0.5, 2);
+    point3 lookat(0, 0, -0.75);
+    vec3 vup(0, 1.75, 0);
+    auto dist_to_focus = (lookfrom - lookat).length();
+    auto aperture = 0.075;
+
+    // Camera position(worldspace), target(worldspace), FOV, aspectratio(from main) aperture
+    camera cam(lookfrom, lookat, vup, 40, aspect_ratio, aperture, dist_to_focus);
 
 
     // Render
